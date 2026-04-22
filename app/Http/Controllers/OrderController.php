@@ -22,7 +22,7 @@ class OrderController extends Controller
 
     public function store(Request $request)
     {
-        // ✅ Validation
+        // Validation
         $request->validate([
             'rice_item_id'  => 'required|exists:rice_items,id',
             'customer_name' => 'required|string|max:255',
@@ -30,32 +30,32 @@ class OrderController extends Controller
             'status'        => 'required|in:pending,completed,cancelled',
         ]);
 
-        // ✅ Get rice item
+        // Get rice item
         $riceItem = RiceItem::findOrFail($request->rice_item_id);
 
-        // ✅ Check stock
+        // Check stock
         if ($request->quantity > $riceItem->stock) {
             return back()
                 ->withErrors(['quantity' => 'Not enough stock available.'])
                 ->withInput();
         }
 
-        // ✅ Calculate total
+        //  Calculate total
         $totalAmount = $riceItem->price * $request->quantity;
 
-        // ✅ Save order (FIXED: total_amount)
+        //  Save order (FIXED: total_amount)
         Order::create([
             'rice_item_id'  => $request->rice_item_id,
             'customer_name' => $request->customer_name,
             'quantity'      => $request->quantity,
-            'total_amount'  => $totalAmount, // ✅ FIX
+            'total_amount'  => $totalAmount, //  FIX
             'status'        => $request->status,
         ]);
 
-        // ✅ Deduct stock
+        //  Deduct stock
         $riceItem->decrement('stock', $request->quantity);
 
-        // ✅ Redirect
+        //  Redirect
         return redirect()->route('orders.index')
             ->with('success', 'Order placed successfully!');
     }

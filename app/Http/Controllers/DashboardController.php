@@ -16,9 +16,9 @@ class DashboardController extends Controller
             'totalPayments'  => Payment::count(),
             'totalRevenue'   => Payment::sum('amount'),
             'recentOrders'   => Order::with('riceItem')
-                                    ->latest()
-                                    ->take(5)
-                                    ->get(),
+                            ->latest()
+                            ->take(5)
+                            ->get(),
         ]);
     }
 }
